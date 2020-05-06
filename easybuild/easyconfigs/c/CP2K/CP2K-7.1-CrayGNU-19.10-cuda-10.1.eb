@@ -3,7 +3,7 @@ easyblock = 'MakeCp'
 
 name = 'CP2K'
 version = '7.1'
-versionsuffix = '-cuda-10.1'
+versionsuffix = '-cuda-%(cudashortver)s'
 
 homepage = 'http://www.cp2k.org/'
 description = """
