@@ -3,6 +3,7 @@ __author__ = 'petar.forai'
 
 import argparse
 import string
+import sys
 import re
 
 # matching groups (0) and (1) for toolchain name as in source file and
@@ -46,21 +47,23 @@ def main():
         print("found original toolchain in config: ", matches.group(1))
         print("found original toolchain version in config: ", matches.group(2))
     else:
-        print("Couldn't determine toolchain information in supplied EasyBuild config.")
+        sys.exit("Couldn't determine toolchain information in supplied EasyBuild config.")
+
+    toolchain, version = matches.group(1), matches.group(2)
 
     oldecfilename = args['filename']
     if not ((args['toolchain'] == 'dummy') and (args['version'] == 'dummy')):
-        newecfilename = oldecfilename.replace(matches.group(1), args['toolchain'])
-        newecfilename = newecfilename.replace(matches.group(2), args['version'])
+        newecfilename = oldecfilename.replace(toolchain, args['toolchain'])
+        newecfilename = newecfilename.replace(version, args['version'])
     else:
-        newecfilename = oldecfilename.replace('-' + matches.group(1), '')
-        newecfilename = newecfilename.replace('-' + matches.group(2), '')
+        newecfilename = oldecfilename.replace('-' + toolchain, '')
+        newecfilename = newecfilename.replace('-' + version, '')
         print("Dummy toolchain specified. Taking care of proper naming.")
 
     print("New config file name will be: ", newecfilename)
 
-    oldec = ec.replace(matches.group(1), args['toolchain'])
-    newec = oldec.replace(matches.group(2), args['version'])
+    oldec = ec.replace(toolchain, args['toolchain'])
+    newec = oldec.replace(version, args['version'])
 
     print("New config will be: ", newec)
 
