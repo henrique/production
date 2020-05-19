@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 __author__ = 'petar.forai'
 
 import argparse
@@ -26,15 +26,15 @@ def main():
 
     args = vars(parser.parse_args())
 
-    print args
-    print "Will use EasyBuild config %s." % (args['filename'])
-    print "New toolchain is set %s %s" % (args['toolchain'], args['version'])
-    print "The new config will be placed in this directory."
+    print(args)
+    print("Will use EasyBuild config %s." % (args['filename']))
+    print("New toolchain is set %s %s" % (args['toolchain'], args['version']))
+    print("The new config will be placed in this directory.")
 
     with open(args['filename'], "r") as originalconfig:
         ec = originalconfig.read()  # contains newlines.
-    print "----"
-    print "The original config was:\n %s" % (ec)
+    print("----")
+    print("The original config was:\n %s" % (ec))
 
     # <GPP> updated regex to accept '.' on the version 
     tcpattern = re.compile("toolchain\s=\s\{'name':\s'(\S*)',\s*'version'\s*:\s*'(\S*)'\s*}")
@@ -42,11 +42,11 @@ def main():
     matches = re.search(tcpattern, ec)
 
     if matches:
-        print "found matches from the config: ", matches.group()
-        print "found original toolchain in config: ", matches.group(1)
-        print "found original toolchain version in config: ", matches.group(2)
+        print("found matches from the config: ", matches.group())
+        print("found original toolchain in config: ", matches.group(1))
+        print("found original toolchain version in config: ", matches.group(2))
     else:
-        print "Couldn't determine toolchain information in supplied EasyBuild config."
+        print("Couldn't determine toolchain information in supplied EasyBuild config.")
 
     oldecfilename = args['filename']
     if not ((args['toolchain'] == 'dummy') and (args['version'] == 'dummy')):
@@ -55,19 +55,19 @@ def main():
     else:
         newecfilename = oldecfilename.replace('-' + matches.group(1), '')
         newecfilename = newecfilename.replace('-' + matches.group(2), '')
-        print "Dummy toolchain specified. Taking care of proper naming."
+        print("Dummy toolchain specified. Taking care of proper naming.")
 
-    print "New config file name will be: ", newecfilename
+    print("New config file name will be: ", newecfilename)
 
-    oldec = string.replace(ec, matches.group(1), args['toolchain'])
-    newec = string.replace(oldec, matches.group(2), args['version'])
+    oldec = ec.replace(matches.group(1), args['toolchain'])
+    newec = oldec.replace(matches.group(2), args['version'])
 
-    print "New config will be: ", newec
+    print("New config will be: ", newec)
 
     with open(newecfilename, "w") as newconfig:
         newconfig.write(newec)  # contains newlines.
 
-    print "Finished writing new config."
+    print("Finished writing new config.")
 
 
 if __name__ == "__main__":
