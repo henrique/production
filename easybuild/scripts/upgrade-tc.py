@@ -20,6 +20,18 @@ def parse_tc(file):
     return matches.group(1), matches.group(2)
 
 
+def parse_metadata(metadata):
+    ''' load a version map of every module in the given metadata '''
+    modules = {}
+    for line in metadata.readlines():
+        if line[0] == '[':
+            module = line[1:line.find(']')]
+            module = module.split('/')
+            module, version = module if len(module) > 1 else (module[0], None)
+            modules[module] = version
+    return modules
+
+
 def main():
     parser = argparse.ArgumentParser(description='Switch toolchain to.')
 
@@ -35,6 +47,14 @@ def main():
                         required=True,
                         help="New toolchain version to use.")
 
+    parser.add_argument('--metadata',
+                        type=argparse.FileType('r'), required=False,
+                        help="Target metadata.")
+
+    # parser.add_argument('--former-cdt',
+    #                     type=argparse.FileType('r'), required=False,
+    #                     help="Old CDT modulesrc.")
+
     parser.add_argument('--filenames',
                         nargs='+', required=True,
                         help="Files to process.")
@@ -44,6 +64,9 @@ def main():
     if args['debug']:
         print(args)
         print(f"New toolchain is set {args['toolchain_prefix']}*-{args['version']}")
+
+    if args['metadata']:
+        modules = parse_metadata(args['metadata'])
 
     for filename in args['filenames']:
         if args['debug']:
@@ -59,17 +82,20 @@ def main():
 
         if ('toolchain_prefix' in args) and not toolchain.startswith(args['toolchain_prefix']):
             sys.exit("Invalid toolchain prefix.")
-        else:
-            print(args['toolchain_prefix'], toolchain)
 
-        oldecfilename = filename
-        newecfilename = oldecfilename.replace(version, args['version'])
+        newecfilename = filename.replace(f"{toolchain}-{version}",
+                                         f"{toolchain}-{args['version']}")
         if args['debug']:
             print("New config file name will be: ", newecfilename)
 
-        newec = ec.replace(version, args['version'])
+        newec = ec.replace(version, args['version'], 1)
         if args['debug']:
             print("---- New config will be:\n", newec)
+
+        ## Check new toolchain
+        _, version = parse_tc(newec)
+        if version != args['version']:
+            sys.exit("Failed to replace toolchain version.")
 
         with open(newecfilename, "w") as newconfig:
             newconfig.write(newec)  # contains newlines.
