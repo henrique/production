@@ -6,7 +6,7 @@ import re
 
 tc_pattern = re.compile("toolchain\s*=\s*\{'name':\s*'(\S*)',\s*'version'\s*:\s*'(\S*)'\s*}")
 
-dep_regex = lambda mod: f"(\s*)('({mod})'\s*,\s*EXTERNAL_MODULE\s*),"
+dep_regex = lambda mod: f"(\s*)\(\s*'({mod})'\s*,\s*EXTERNAL_MODULE\s*\),"
 dep_pattern = re.compile(dep_regex('\S*')) # any module
 
 
@@ -32,8 +32,10 @@ def parse_metadata(metadata):
             module = line[1:line.find(']')]
             module = module.split('/')
             module, version = module if len(module) > 1 else (module[0], None)
+            ## TODO: handle multi-version modules !!!
             modules[module] = version
     return modules
+
 
 
 def main():
@@ -72,7 +74,7 @@ def main():
     if args['metadata']:
         modules = parse_metadata(args['metadata'])
         if args['debug']:
-            print('metadata:', modules)
+            print('Metadata:\n', modules)
 
     for filename in args['filenames']:
         if args['debug']:
@@ -86,7 +88,7 @@ def main():
 
         toolchain, version = parse_tc(ec)
 
-        if ('toolchain_prefix' in args) and not toolchain.startswith(args['toolchain_prefix']):
+        if args['toolchain_prefix'] and not toolchain.startswith(args['toolchain_prefix']):
             sys.exit("Invalid toolchain prefix.")
 
         newecfilename = filename.replace(f"{toolchain}-{version}",
@@ -97,6 +99,25 @@ def main():
         newec = re.sub(tc_pattern,
                        f"toolchain = {{'name': '{toolchain}', 'version': '{args['version']}'}}",
                        ec)
+
+        if args['metadata']:
+            # find all external dependencies
+            deps = re.findall(dep_pattern, newec)
+            if deps is not None:
+                if args['debug']:
+                    print("External Modules:\n", deps)
+
+                for ws, dep in deps:
+                    mod = dep.split('/')[0]
+                    if mod in modules.keys():
+                        ver = modules[mod]
+                        if ver is not None:
+                            mod = f"{mod}/{ver}"
+                        if args['debug']:
+                            print(f"Replacing '{dep}' by '{mod}'")
+                            print(dep_regex(dep))
+                        newec = re.sub(dep_regex(dep), f"{ws}('{mod}', EXTERNAL_MODULE),", newec)
+
         if args['debug']:
             print("---- New config will be:\n", newec)
 
