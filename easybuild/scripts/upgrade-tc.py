@@ -4,11 +4,15 @@ import string
 import sys
 import re
 
+tc_pattern = re.compile("toolchain\s*=\s*\{'name':\s*'(\S*)',\s*'version'\s*:\s*'(\S*)'\s*}")
+
+dep_regex = lambda mod: f"(\s*)('({mod})'\s*,\s*EXTERNAL_MODULE\s*),"
+dep_pattern = re.compile(dep_regex('\S*')) # any module
+
 
 def parse_tc(file):
     ''' determine toolchain information in supplied EasyBuild config '''
-    tcpattern = re.compile("toolchain\s=\s\{'name':\s'(\S*)',\s*'version'\s*:\s*'(\S*)'\s*}")
-    matches = re.search(tcpattern, file)
+    matches = re.search(tc_pattern, file)
 
     if matches:
         print("found matches from the config: ", matches.group())
@@ -67,6 +71,8 @@ def main():
 
     if args['metadata']:
         modules = parse_metadata(args['metadata'])
+        if args['debug']:
+            print('metadata:', modules)
 
     for filename in args['filenames']:
         if args['debug']:
@@ -88,7 +94,9 @@ def main():
         if args['debug']:
             print("New config file name will be: ", newecfilename)
 
-        newec = ec.replace(version, args['version'], 1)
+        newec = re.sub(tc_pattern,
+                       f"toolchain = {{'name': '{toolchain}', 'version': '{args['version']}'}}",
+                       ec)
         if args['debug']:
             print("---- New config will be:\n", newec)
 
