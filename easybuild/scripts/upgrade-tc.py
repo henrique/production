@@ -4,20 +4,21 @@ import string
 import sys
 import re
 
-tc_pattern = re.compile("toolchain\s*=\s*\{'name':\s*'(\S*)',\s*'version'\s*:\s*'(\S*)'\s*}")
+tc_pattern = re.compile("toolchain\s*=\s*\{\s*'name'\s*:\s*'(\S*)'\s*,\s*'version'\s*:\s*'(\S*)'\s*}")
 
 dep_regex = lambda mod: f"(\s*)\(\s*'({mod})'\s*,\s*EXTERNAL_MODULE\s*\),"
 dep_pattern = re.compile(dep_regex('\S*')) # any module
 
 
-def parse_tc(file):
+def parse_tc(file, debug):
     ''' determine toolchain information in supplied EasyBuild config '''
     matches = re.search(tc_pattern, file)
 
     if matches:
-        print("found matches from the config: ", matches.group())
-        print("found original toolchain in config: ", matches.group(1))
-        print("found original toolchain version in config: ", matches.group(2))
+        if debug:
+            print("found matches from the config: ", matches.group())
+            print("found original toolchain in config: ", matches.group(1))
+            print("found original toolchain version in config: ", matches.group(2))
     else:
         raise RuntimeError(f"Couldn't determine toolchain information in supplied EasyBuild config.")
 
@@ -77,8 +78,8 @@ def main():
             print('Metadata:\n', modules)
 
     for filename in args['filenames']:
+        print(f"Processing EasyBuild config {filename} ...")
         if args['debug']:
-            print(f"Will use EasyBuild config {filename}.")
             print("The new config will be placed in original directory.")
 
         with open(filename, "r") as originalconfig:
@@ -86,10 +87,10 @@ def main():
         if args['debug']:
             print("---- The original config was:\n", ec)
 
-        toolchain, version = parse_tc(ec)
+        toolchain, version = parse_tc(ec, args['debug'])
 
         if args['toolchain_prefix'] and not toolchain.startswith(args['toolchain_prefix']):
-            sys.exit("Invalid toolchain prefix.")
+            sys.exit(f"Invalid toolchain prefix in {filename}")
 
         newecfilename = filename.replace(f"{toolchain}-{version}",
                                          f"{toolchain}-{args['version']}")
@@ -122,7 +123,7 @@ def main():
             print("---- New config will be:\n", newec)
 
         ## Check new toolchain
-        _, version = parse_tc(newec)
+        _, version = parse_tc(newec, args['debug'])
         if version != args['version']:
             sys.exit("Failed to replace toolchain version.")
 

@@ -1,0 +1,30 @@
+easyblock = 'PythonPackage'
+
+name = 'numpy'
+version = '1.17.2'
+
+homepage = 'https://github.com/numpy/numpy'
+description = "Horovod is a distributed training framework for TensorFlow."
+
+toolchain = {'name': 'CrayGNU', 'version': '20.05'}
+toolchainopts = {'verbose': False}
+
+source_urls = ['https://github.com/numpy/numpy/releases/download/v%s' % version]
+sources = [SOURCELOWER_TAR_GZ]
+
+dependencies = [
+    ('cray-python/3.8.2.0', EXTERNAL_MODULE),
+]
+
+patches = [('mkl-2019-sitecfg.patch', 1)]
+
+skipsteps = ['build']
+
+modextravars = { 'LD_LIBRARY_PATH':'/opt/intel/compilers_and_libraries_2019/linux/mkl/lib/intel64:$::env(LD_LIBRARY_PATH)'}
+
+sanity_check_paths = {
+    'files': [],
+    'dirs': ['lib/python%(pyshortver)s/site-packages'],
+}
+
+moduleclass = 'tools'
