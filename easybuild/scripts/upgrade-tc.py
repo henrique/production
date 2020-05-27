@@ -49,7 +49,6 @@ def parse_metadata(metadata):
                     if majver not in versions.keys() or greater_ver(version, versions[majver]):
                         versions[majver] = version
                     version = {k:versions[k] for k in sorted(versions.keys())}
-                print({module: version})
             modules[module] = version
     return modules
 
@@ -133,7 +132,6 @@ def main():
                             majver = depver.split('.')[0]
                             # get latest matching version
                             ver = ver[majver] if majver in ver.keys() else ver.values()[-1]
-                            print(mod, majver, depver, ver)
                             mod = f"{mod}/{ver}"
                         if args['debug']:
                             print(f"Replacing '{dep}' by '{mod}'")
