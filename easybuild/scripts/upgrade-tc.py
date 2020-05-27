@@ -25,6 +25,12 @@ def parse_tc(file, debug):
     return matches.group(1), matches.group(2)
 
 
+def greater_ver(v1, v2):
+    ''' compare 2 version strings '''
+    v1 = [(int(v) if v.isnumeric() else v) for v in v1.split('.')]
+    v2 = [(int(v) if v.isnumeric() else v) for v in v2.split('.')]
+    return v1 > v2
+
 def parse_metadata(metadata):
     ''' load a version map of every module in the given metadata '''
     modules = {}
@@ -33,7 +39,17 @@ def parse_metadata(metadata):
             module = line[1:line.find(']')]
             module = module.split('/')
             module, version = module if len(module) > 1 else (module[0], None)
-            ## TODO: handle multi-version modules !!!
+            # keep a map of major versions to latest available version
+            if version is not None:
+                majver = version.split('.')[0]
+                if module not in modules.keys():
+                    version = {majver: version}
+                else: # update majver if needed
+                    versions = modules[module]
+                    if majver not in versions.keys() or greater_ver(version, versions[majver]):
+                        versions[majver] = version
+                    version = {k:versions[k] for k in sorted(versions.keys())}
+                print({module: version})
             modules[module] = version
     return modules
 
@@ -113,6 +129,11 @@ def main():
                     if mod in modules.keys():
                         ver = modules[mod]
                         if ver is not None:
+                            depver = dep.split('/')[1]
+                            majver = depver.split('.')[0]
+                            # get latest matching version
+                            ver = ver[majver] if majver in ver.keys() else ver.values()[-1]
+                            print(mod, majver, depver, ver)
                             mod = f"{mod}/{ver}"
                         if args['debug']:
                             print(f"Replacing '{dep}' by '{mod}'")

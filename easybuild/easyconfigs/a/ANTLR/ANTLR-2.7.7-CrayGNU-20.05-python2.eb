@@ -25,7 +25,7 @@ local_osdependency = ['java']
 dependencies = [
     # On DOM this dependency is provided as local_osdependency
     #('java', EXTERNAL_MODULE),
-    ('cray-python/3.8.2.0', EXTERNAL_MODULE),
+    ('cray-python/2.7.15.7', EXTERNAL_MODULE),
 ]
 
 configopts = '--disable-examples --disable-csharp '

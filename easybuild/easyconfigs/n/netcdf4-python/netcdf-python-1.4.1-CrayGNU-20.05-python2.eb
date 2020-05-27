@@ -12,7 +12,7 @@ sources = ['netCDF4-%(version)s.tar.gz']
 
 versionsuffix = '-python%(pymajver)s'
 dependencies = [
-    ('cray-python/3.8.2.0', EXTERNAL_MODULE),
+    ('cray-python/2.7.15.7', EXTERNAL_MODULE),
     ('cray-netcdf', EXTERNAL_MODULE),
     ('cray-hdf5', EXTERNAL_MODULE),
     ('cftime', '1.0.0', '-python%(pymajver)s'),

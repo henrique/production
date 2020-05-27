@@ -11,7 +11,7 @@ toolchain = {'name': 'CrayGNU', 'version': '20.05'}
 toolchainopts = {'pic': True, 'verbose' : False }
 
 dependencies = [
-    ('cray-python/3.8.2.0', EXTERNAL_MODULE),
+    ('cray-python/2.7.15.7', EXTERNAL_MODULE),
 ]
 
 exts_default_options = {

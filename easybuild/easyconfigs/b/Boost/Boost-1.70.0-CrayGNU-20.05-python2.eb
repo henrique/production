@@ -25,7 +25,7 @@ configopts  = (
 dependencies = [
     ('bzip2', '1.0.6'),
     ('zlib', '1.2.11'),
-    ('cray-python/3.8.2.0', EXTERNAL_MODULE),
+    ('cray-python/2.7.15.7', EXTERNAL_MODULE),
 ]
 
 # CURRENTLY DISABLED, SINCE IT LEADS TO COMPATIBILITY ISSUES (e. g. with ParaView, HPX)
