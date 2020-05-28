@@ -2,7 +2,7 @@
 name = 'Boost'
 version = '1.70.0'
 
-_pyminver = '6'
+_pyminver = '8'
 versionsuffix = '-python%(pymajver)s'
 
 homepage = 'http://www.boost.org/'
@@ -27,8 +27,6 @@ dependencies = [
     ('zlib', '1.2.11'),
     ('cray-python/3.8.2.0', EXTERNAL_MODULE),
 ]
-
-patches = ['Boost-1.70.0-python%(pymajver)s.patch']
 
 # CURRENTLY DISABLED, SINCE IT LEADS TO COMPATIBILITY ISSUES (e. g. with ParaView, HPX)
 #
