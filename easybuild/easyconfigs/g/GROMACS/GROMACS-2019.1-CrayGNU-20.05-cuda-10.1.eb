@@ -32,6 +32,8 @@ skipsteps = ['test']
 # CMake dependency with dummy toolchain
 builddependencies = [
     ('CMake', '3.14.1', '', True),
+    ('GCC', '8.3.0', '', True),
+
 ]
 dependencies = [
     ('cudatoolkit/10.1.105_3.27-7.0.1.1_4.1__ga311ce7', EXTERNAL_MODULE),

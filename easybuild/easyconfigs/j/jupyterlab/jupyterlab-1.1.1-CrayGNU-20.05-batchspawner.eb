@@ -5,7 +5,7 @@ easyblock = 'PythonBundle'
 name = 'jupyterlab'
 version = '1.1.1'
 versionsuffix = '-batchspawner'
-_pyminver = '6'
+_pyminver = '8'
 
 homepage = 'https://github.com/jupyterlab/jupyterlab'
 description = "An extensible environment for interactive and reproducible computing, based on the Jupyter Notebook and Architecture."

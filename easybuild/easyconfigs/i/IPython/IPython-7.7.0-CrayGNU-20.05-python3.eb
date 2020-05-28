@@ -5,7 +5,7 @@ easyblock = 'PythonBundle'
 name = 'IPython'
 version = '7.7.0'
 
-_pyminver = '6'
+_pyminver = '8'
 versionsuffix = '-python%(pymajver)s'
 
 homepage = 'https://pypi.python.org/pypi'

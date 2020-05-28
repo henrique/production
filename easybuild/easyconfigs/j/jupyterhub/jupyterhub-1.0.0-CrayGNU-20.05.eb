@@ -4,7 +4,7 @@ easyblock = 'PythonBundle'
 
 name = 'jupyterhub'
 version = '1.0.0'
-_pyminver = '6'
+_pyminver = '8'
 
 homepage = 'https://pypi.python.org/pypi'
 description = """This module is a bundle of Python packages on Cray systems based on the module cray-python"""

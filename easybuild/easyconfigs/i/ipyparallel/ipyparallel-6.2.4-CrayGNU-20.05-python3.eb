@@ -4,7 +4,7 @@ name = 'ipyparallel'
 version = '6.2.4'
 
 versionsuffix = '-python%(pymajver)s'
-_pyminver = '6'
+_pyminver = '8'
 
 req_py_majver = '%(pymajver)s'
 req_py_minver = _pyminver
